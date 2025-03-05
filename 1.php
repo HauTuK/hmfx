@@ -7,15 +7,15 @@ function main(): void {
     $surname = getInput("Введите фамилию: ");
     $patronymic = getInput("Введите отчество: ");
 
-    // Формирование полного ФИО
-    $fullname = ucwords("$surname $name $patronymic");
+    // Формирование полного ФИО с использованием mb_convert_case
+    $fullname = mb_convert_case("$surname $name $patronymic", MB_CASE_TITLE, "UTF-8");
 
     // Формирование фамилии с инициалами
-    $initials = strtoupper(mb_substr($name, 0, 1)) . ". " . strtoupper(mb_substr($patronymic, 0, 1)) . ".";
-    $surnameAndInitials = "$surname $initials";
+    $initials = mb_strtoupper(mb_substr($name, 0, 1, "UTF-8")) . ". " . mb_strtoupper(mb_substr($patronymic, 0, 1, "UTF-8")) . ".";
+    $surnameAndInitials = mb_convert_case($surname, MB_CASE_TITLE, "UTF-8") . " " . $initials;
 
     // Формирование сокращенного ФИО
-    $fio = strtoupper(mb_substr($surname, 0, 1)) . strtoupper(mb_substr($name, 0, 1)) . strtoupper(mb_substr($patronymic, 0, 1));
+    $fio = mb_strtoupper(mb_substr($surname, 0, 1, "UTF-8")) . mb_strtoupper(mb_substr($name, 0, 1, "UTF-8")) . mb_strtoupper(mb_substr($patronymic, 0, 1, "UTF-8"));
 
     // Вывод результатов
     echo "Полное ФИО: $fullname\n";
@@ -27,7 +27,8 @@ function getInput(string $prompt): string {
     echo $prompt;
     $input = trim(fgets(STDIN));
 
-    while (empty($input) || !preg_match('/^[\p{Cyrillic}]+$/u', $input)) {
+    // Проверка на пустой ввод и корректность ввода с учетом кириллицы
+    while (empty($input) || !preg_match('/^[\p{Cyrillic} ]+$/u', $input)) {
         echo "Некорректный ввод. Пожалуйста, введите только буквы кириллицы: ";
         $input = trim(fgets(STDIN));
     }
@@ -35,4 +36,4 @@ function getInput(string $prompt): string {
     return $input;
 }
 
-main();# hmfx
+main();
